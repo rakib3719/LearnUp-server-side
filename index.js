@@ -42,10 +42,11 @@ async function run() {
 
     const assinmentCollection = client.db('learnUp').collection('assignment')
 
-app.post('/createAss', (req, res)=>{
+app.post('/createAss', async(req, res)=>{
 
 const assinmentInfo = req.body;
-const result = 
+const result = await assinmentCollection.insertOne(assinmentInfo);
+res.send(result)
 
 
 })
