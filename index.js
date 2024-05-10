@@ -113,7 +113,31 @@ const result = await assinmentCollection.findOne(query);
 res.send(result)
 
 })
+app.put('/update', async(req, res)=>{
 
+const previousData = req.body;
+const id =  req.query.id;
+
+const filter = {_id: new ObjectId(id)}
+const updatedData = {
+
+  $set:{
+
+
+    date: previousData.date,
+    description: previousData.description,
+    level: previousData.level,
+    mark: previousData.mark,
+    thumb_img: previousData.thumb_img,
+    title: previousData.title
+  },
+}
+
+const result = await assinmentCollection.updateOne(filter, updatedData);
+res.send(result)
+
+
+})
 app.delete('/delete', verifyToken, async(req, res)=>{
 
 const id = req.query.id;
