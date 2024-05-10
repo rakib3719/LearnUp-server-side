@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser')
 const port = process.env.PORT || 5000;
 const app = express();
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 app.use(cors({
@@ -24,7 +24,24 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
+// verify Token
 
+const verifyToken = (req, res, next) => {
+    const token = req?.cookies?.token
+    if (!token) return res.status(401).send({ message: 'unauthorized access' })
+    if (token) {
+      jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+          console.log(err)
+          return res.status(401).send({ message: 'unauthorized access' })
+        }
+        console.log(decoded)
+  
+        req.user = decoded
+        next()
+      })
+    }
+  }
 
 
 const uri = `mongodb+srv://${process.env.user}:${process.env.PASSWORD}@cluster0.ngsjczb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -47,7 +64,8 @@ async function run() {
     const assinmentCollection = client.db('learnUp').collection('assignment')
 
     app.post('/jwt', async (req, res) => {
-        const email = req.body
+        const email = req.body;
+        console.log(email);
         const token = jwt.sign(email, process.env.TOKEN_SECRET, {
           expiresIn: '7d',
         })
@@ -77,11 +95,25 @@ const result = await assinmentCollection.find().toArray();
 res.send(result)
 
     })
-app.post('/createAss', async(req, res)=>{
+app.post('/createAss',verifyToken, async(req, res)=>{
 
 const assinmentInfo = req.body;
 const result = await assinmentCollection.insertOne(assinmentInfo);
 res.send(result)
+
+
+})
+app.delete('/delete', verifyToken, async(req, res)=>{
+
+const id = req.query.id;
+const email = req.query.email;
+if(req.user.email !== email){
+    res.status(400).send('forbidden access')
+    return;
+}
+const query = {_id: new ObjectId(id)};
+const result =await assinmentCollection.deleteOne(query);
+res.send(result);
 
 
 })
