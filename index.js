@@ -23,7 +23,7 @@ app.use(cookieParser())
 
 
 
-const uri = "mongodb+srv://<username>:<password>@cluster0.ngsjczb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = `mongodb+srv://${process.env.user}:${process.env.PASSWORD}@cluster0.ngsjczb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -39,6 +39,17 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
+
+    const assinmentCollection = client.db('learnUp').collection('assignment')
+
+app.post('/createAss', (req, res)=>{
+
+const assinmentInfo = req.body;
+const result = 
+
+
+})
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
