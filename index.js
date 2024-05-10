@@ -66,6 +66,14 @@ async function run() {
 
 // examineeInfo
 
+
+app.get('/pending', async (req, res)=> {
+
+    const query = {status: 'pending'};
+    const result = await examineCollection.find(query).toArray();
+    res.send(result)
+})
+
 app.post('/assSubmit', verifyToken, async (req, res)=>{
 
 const examineeDetails = req.body;
