@@ -62,6 +62,29 @@ async function run() {
     // Send a ping to confirm a successful connection
 
     const assinmentCollection = client.db('learnUp').collection('assignment')
+    const examineCollection = client.db('learnUp').collection('examineeInfo')
+
+// examineeInfo
+
+app.post('/assSubmit', verifyToken, async (req, res)=>{
+
+const examineeDetails = req.body;
+const email = examineeDetails.examineeEmail;
+
+if(req.user.email !== email ){
+
+    res.status(400).send('forbidden access')
+    return;
+}
+
+const result = await examineCollection.insertOne(examineeDetails)
+res.send(result)
+
+})
+
+
+
+    // assinmentCollection
 
     app.post('/jwt', async (req, res) => {
         const email = req.body;
@@ -104,6 +127,15 @@ res.send(result)
 
 })
 
+
+app.get('/details', verifyToken, async(req, res)=>{
+
+    const id = req.query.id;
+    const query = {_id : new ObjectId(id)};
+    const result = await assinmentCollection.findOne(query);
+    res.send(result)
+    
+    })
 
 app.get('/update', async(req, res)=>{
 
