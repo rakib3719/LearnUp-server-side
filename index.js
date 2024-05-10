@@ -42,6 +42,13 @@ async function run() {
 
     const assinmentCollection = client.db('learnUp').collection('assignment')
 
+
+    app.get('/assignment', async(req, res)=>{
+
+const result = await assinmentCollection.find().toArray();
+res.send(result)
+
+    })
 app.post('/createAss', async(req, res)=>{
 
 const assinmentInfo = req.body;
