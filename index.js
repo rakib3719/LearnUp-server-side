@@ -67,6 +67,26 @@ async function run() {
 // examineeInfo
 
 
+
+
+app.patch('/giveMark', async (req, res)=> {
+
+const id = req.query.id;
+const markDetails = req.body;
+
+const filter = {_id : new ObjectId(id)};
+const options = { upsert: true };
+const updateDoc = {
+  $set: {
+    feedback: markDetails.feedback,
+    mark : markDetails.mark,
+    status: 'completed.'
+  },
+};
+const result = await examineCollection.updateOne(filter, updateDoc, options)
+res.send(result)
+
+})
 app.get('/pending', async (req, res)=> {
 
     const query = {status: 'pending'};
@@ -122,7 +142,13 @@ res.send(result)
 
     app.get('/assignment', async(req, res)=>{
 
-const result = await assinmentCollection.find().toArray();
+  
+      const Filterlevel = req.query.level;
+      let query = {}
+      if(Filterlevel){
+        query = {level : Filterlevel}
+      }
+const result = await assinmentCollection.find(query).toArray();
 res.send(result)
 
     })
