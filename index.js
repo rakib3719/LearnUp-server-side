@@ -79,11 +79,26 @@ const options = { upsert: true };
 const updateDoc = {
   $set: {
     feedback: markDetails.feedback,
-    mark : markDetails.mark,
+    obtainedMarks : markDetails.mark,
     status: 'completed.'
   },
 };
 const result = await examineCollection.updateOne(filter, updateDoc, options)
+res.send(result)
+
+})
+
+// myaAttempted assignment
+
+app.get('/myAssignment',verifyToken, async (req, res)=>{
+const email = req.query.email;
+if(req.user.email !== email){
+  res.status(400).send('forbidden access')
+  return;
+
+}
+const filter = {examineeEmail: email};
+const result = await examineCollection.find(filter).toArray();
 res.send(result)
 
 })
